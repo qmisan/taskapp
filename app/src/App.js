@@ -9,12 +9,7 @@ import { MainView } from './components/MainView';
 function App() {
   const [users, setUsers] = useState();
   const [user, setUser] = useState();
-  // const [username, setUsername] = useState("");
 
-  // function handleInput(e) {
-  //   setUsername(e.target.value);
-  // }
-  
   useEffect(() => {
     eva.replace();
     getUsers().then(data => setUsers(data));

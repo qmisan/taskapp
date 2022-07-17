@@ -4,18 +4,13 @@ import { getTasksForUser } from './getTasks.js'
 import { TaskRepository } from './taskRepository.js'
 import { UserRepository } from './userRepository.js'
 import { UserTaskRepository } from './userTaskRepository.js'
-import { CourseRepository } from './courseRepository.js'
-import { CourseTaskRepository } from './courseTaskRepository.js'
-import { PracticeRepository } from './practiceRepository.js'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 
 // dummy data sources
 import dummyUsersJSON from './dummy/dummyUsers.js'
-import dummyCoursesJSON from './dummy/dummyCourses.js'
 import dummyTasksJSON from './dummy/dummyTasks.js'
-import dummyPracticesJSON from './dummy/dummyPractices.js'
 
 const app = express()
 const port = 8000
@@ -30,13 +25,9 @@ const dao = createDB()
 const taskRepo = new TaskRepository(dao)
 const userRepo = new UserRepository(dao)
 const userTaskRepo = new UserTaskRepository(dao)
-const courseRepo = new CourseRepository(dao)
-const courseTaskRepo = new CourseTaskRepository(dao)
-const practiceRepo = new PracticeRepository(dao)
 
 // Create initial tables
-await Promise.all([userRepo.createTable(), taskRepo.createTable(), courseRepo.createTable(), practiceRepo.createTable()])
-await courseTaskRepo.createTable() // Needs course and tasks
+await Promise.all([userRepo.createTable(), taskRepo.createTable()])
 await userTaskRepo.createTable() // Needs User and tasks
 
 // Fill usertable with dummydata
@@ -45,22 +36,6 @@ if ((await userRepo.getAll()).length === 0) {
   for (const user of dummyUsersJSON) {
     await userRepo.create(user.name)
   }
-}
-
-// Fill coursetable with dummydata
-if ((await courseRepo.getAll()).length === 0) {
-  console.log('Filling courses table with dummy data')
-  for (const course of dummyCoursesJSON) {
-    await courseRepo.create(course.name)
-  }
-}
-
-// Fill practices with dummydata
-if ((await practiceRepo.getAll()).length === 0) {
-  console.log('Filling practices table with dummy data')
-  dummyPracticesJSON.map(practice => {
-      practiceRepo.create(practice.title, practice.imgpath, practice.description, practice.duration, practice.type)
-  })
 }
 
 // Fill tasks with dummydata
@@ -81,18 +56,6 @@ if ((await userTaskRepo.getAll()).length === 0) {
   }))
 }
 
-if ((await courseTaskRepo.getAll()).length === 0) {
-  console.log('Filling courseTasks table with dummy data')
-  await Promise.all(dummyCoursesJSON.map(async (course) => {
-    const courseId = (await courseRepo.getByName(course.name)).id
-    for (const taskId of course.tasks) {
-      courseTaskRepo.create(courseId, taskId)
-      for (const userId of course.students) {
-        userTaskRepo.create(userId, taskId, courseId)
-      }
-    }
-  }))
-}
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -155,20 +118,4 @@ app.post('/completeTask', async (req, res) => {
   const complete = req.body.completed
   await userTaskRepo.changeComplete(userid, taskid, complete)
   res.status(204).send('Task completed')
-})
-
-app.get('/getPractices', async (req, res) => {
-  const practices = await practiceRepo.getAll()
-  res.send(practices)
-})
-
-app.get('/getPracticeByType', async (req, res) => {
-  const practiceType = req.query.practiceType
-  const practices = await practiceRepo.getByType(practiceType)
-  res.send(practices)
-})
-
-app.get('/getCourse', async (req, res) => {
-  const course = await courseRepo.getById(req.query.courseId)
-  res.send(course)
 })

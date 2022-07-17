@@ -138,7 +138,7 @@ export function getTimeUsed( milliseconds ) {
 
   if (!day && !hour && !minute)
   {
-    return "<1min";
+    return seconds + " seconds";
   }
   else
   {

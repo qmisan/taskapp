@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import * as _ from "underscore";
-import AaltoLogo from "../assets/A_essentials_logo.svg";
 
 import { TakeABreak } from "./TakeABreak";
 import { Task } from "./Task";
@@ -24,14 +23,6 @@ export function MainView({ user }) {
   return (
     <Fragment>
       <div className="header">
-        <div className="aalto-logo">
-          <img alt="aalto logo" src={AaltoLogo} />
-        </div>
-        <div className="navigation">
-          <span onClick={() => setView("tasks")}>{"Tasks"}</span>
-          <span onClick={() => setView("timer")}>{"Timer"}</span>
-          <span onClick={() => setView("break")}>{"Take a break"}</span>
-        </div>
       </div>
       {showTaskList && <TaskList user={user} />}
       {showTimer && <Task task={null} user={user} />}

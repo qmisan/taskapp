@@ -3,8 +3,9 @@ import { TaskTimer } from "./TaskTimer";
 
 export function Task({ task, user }) {
   const [timerOn, setTimerOn] = useState(false);
+  const [pomodoroInProgress, setPomodoroInProgress] = useState(false);
 
-  const buttonText = timerOn ? "Stop" : "Start";
+  const stopStartButtonText = timerOn ? "Stop" : "Start";
 
   function toggleTimer() {
     setTimerOn(!timerOn);
@@ -19,7 +20,7 @@ export function Task({ task, user }) {
               <TaskTimer user={user} task={task} timerOn={timerOn} />
             </h2>
             <button className="timer-button" onClick={toggleTimer}>
-              <h2>{buttonText}</h2>
+              <h2>{stopStartButtonText}</h2>
             </button>
           </div>
           {!!task && (

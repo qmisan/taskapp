@@ -9,7 +9,6 @@ import Checked from "../assets/Checked.svg";
 import Unchecked from "../assets/Unchecked.svg";
 import CheckboxActive from "../assets/CheckboxActive.svg";
 import Plus from "../assets/plus.svg";
-import MockCourseSelect from "../assets/MockCourseSelect.svg";
 
 import { getTasks, markCompleted, addTask, getCourseByTask, updateTime, getTimeUsed } from "../utils.js";
 
@@ -17,7 +16,7 @@ function AddNewTask({ user, loadTasks, onCancel }) {
   const [formData, setFormData] = useState({ name: "", description: "", userId: user.id });
 
   function handleInput(e) {
-    setFormData({...formData, [e.target.name]: e.target.value.trim() });
+    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
   }
 
   async function handleAddNewTask(e) {
@@ -32,9 +31,8 @@ function AddNewTask({ user, loadTasks, onCancel }) {
       <div className="checkbox"><img src={Unchecked} alt="unchecked" /></div>
       <form onSubmit={handleAddNewTask}>
         <div className="new-task-fields">
-          <input type="text" name="name" placeholder="Add name" onChange={handleInput} />
-          <img src={MockCourseSelect} alt="Add to course" />
-          <input type="text" name="description" placeholder="Add description" onChange={handleInput} />
+          <input type="text" name="name" placeholder="Task title" onChange={handleInput} />
+          <input type="text" name="description" placeholder="Description" onChange={handleInput} />
         </div>
         <button className="cancel" onClick={onCancel}>{"Cancel"}</button>
         <button type="submit">{"Add"}</button>
@@ -93,12 +91,12 @@ function TaskListItem({ user, task, loadTasks }) {
     }
   }
 
-  function onTimerUpdate({time, duration}) {
+  function onTimerUpdate({ time, duration }) {
     setTime(time);
     setDuration(duration);
   }
 
-  return(
+  return (
     <div className={classNames("task-list-item", { "completed": completed, "active": active })}>
       <div className="checkbox" onClick={markTaskComplete}>{getCheckbox()}</div>
       <div className="task-info">
@@ -118,7 +116,10 @@ function TaskListItem({ user, task, loadTasks }) {
             {buttonText}
           </button>
           {showTimeUsed && (
-            <span className="time-used">{"Already worked time: " + getTimeUsed(task.timer) }</span>
+            <div>
+              <div className="time-used">{"Already worked time: "}</div>
+              <div className="time-used">{getTimeUsed(task.timer)}</div>
+            </div>
           )}
         </div>
       )}
@@ -146,8 +147,8 @@ export function TaskList({ user }) {
   const [completedTasks, setCompletedTasks] = useState([]);
   const [unfinishedTasks, setUnfinishedTasks] = useState([]);
   const hasTasks = unfinishedTasks.length > 0;
-  const message = hasTasks ? "Here are your most important tasks for today" : "Congratulations! You've done it all."; 
-  
+  const message = hasTasks ? "Here are your most important tasks for today" : "Congratulations! You've done it all.";
+
   useEffect(() => {
     loadTasks();
   }, [user])
@@ -167,13 +168,13 @@ export function TaskList({ user }) {
   const hasFinishedTasks = completedTasksCount > 0;
   const completedMessage = hasFinishedTasks ? "You have already completed " + completedTasksCount + " task(s)!" : "";
 
-  return(
+  return (
     <Fragment>
       <div className="welcome-view">
         <div className="container">
           <div className="left-column">
-            <h3>{"Hello, " + user.name + "!"}</h3>
-            <h2>{message}</h2>
+            {/* <h3>{"Hello, " + user.name + "!"}</h3> */}
+            {/* <h2>{message}</h2> */}
             <div className="add-task">
               <button className="add-button" onClick={() => setShowAddNew(!showAddNew)}>
                 <img src={Plus} />
