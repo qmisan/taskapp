@@ -250,3 +250,9 @@
   align-self: flex-end;
   margin-right: 16px;
 }
+
+.task-list-item:hover
+{
+  transform: scale(1.05);
+  transition-duration: 0.2s;  
+}

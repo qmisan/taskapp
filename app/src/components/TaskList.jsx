@@ -117,8 +117,7 @@ function TaskListItem({ user, task, loadTasks }) {
           </button>
           {showTimeUsed && (
             <div>
-              <div className="time-used">{"Already worked time: "}</div>
-              <div className="time-used">{getTimeUsed(task.timer)}</div>
+              <div className="time-used">{"Time spent: " + getTimeUsed(task.timer)}</div>
             </div>
           )}
         </div>
