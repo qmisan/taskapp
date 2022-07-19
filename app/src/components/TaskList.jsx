@@ -10,7 +10,7 @@ import Unchecked from "../assets/Unchecked.svg";
 import CheckboxActive from "../assets/CheckboxActive.svg";
 import Plus from "../assets/plus.svg";
 
-import { getTasks, markCompleted, addTask, getCourseByTask, updateTime, getTimeUsed } from "../utils.js";
+import { getTasks, markCompleted, addTask, updateTime, getTimeUsed } from "../utils.js";
 
 function AddNewTask({ user, loadTasks, onCancel }) {
   const [formData, setFormData] = useState({ name: "", description: "", userId: user.id });
@@ -43,16 +43,11 @@ function AddNewTask({ user, loadTasks, onCancel }) {
 
 function TaskListItem({ user, task, loadTasks }) {
   const [active, setActive] = useState(false);
-  const [course, setCourse] = useState("Personal task");
   const completed = task.completed === 1;
-  const buttonText = active ? "Stop" : "Start";
+  const startStopButtonText = active ? "Stop" : "Start";
   const showTimeUsed = !active && task.timer > 0;
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(25 * 60 * 1000);
-
-  useEffect(() => {
-    if (task.courseId) getCourseForTask();
-  }, [])
 
   async function markTaskComplete() {
     if (completed) {
@@ -77,10 +72,6 @@ function TaskListItem({ user, task, loadTasks }) {
     await loadTasks();
   }
 
-  async function getCourseForTask() {
-    getCourseByTask(task.courseId).then(course => setCourse(course.name));
-  }
-
   function getCheckbox() {
     if (completed) {
       return <img src={Checked} alt="checked" />;
@@ -101,7 +92,6 @@ function TaskListItem({ user, task, loadTasks }) {
       <div className="checkbox" onClick={markTaskComplete}>{getCheckbox()}</div>
       <div className="task-info">
         <span>{task.name}</span>
-        <span>{course}</span>
         <span>{task.description}</span>
       </div>
       {!completed && (
@@ -113,7 +103,7 @@ function TaskListItem({ user, task, loadTasks }) {
             </h3>
           )}
           <button className="toggle-task" onClick={toggleTimer}>
-            {buttonText}
+            {startStopButtonText}
           </button>
           {showTimeUsed && (
             <div>
@@ -172,8 +162,6 @@ export function TaskList({ user }) {
       <div className="welcome-view">
         <div className="container">
           <div className="left-column">
-            {/* <h3>{"Hello, " + user.name + "!"}</h3> */}
-            {/* <h2>{message}</h2> */}
             <div className="add-task">
               <button className="add-button" onClick={() => setShowAddNew(!showAddNew)}>
                 <img src={Plus} />

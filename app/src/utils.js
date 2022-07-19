@@ -35,16 +35,6 @@ export async function getActivityBreaks() {
   return data;
 }
 
-export async function getCourseByTask(courseId) {
-  let url = new URL("http://localhost:8000/getCourse");
-  let params = { courseId: courseId };
-  url.search = new URLSearchParams(params).toString();
-
-  let response = await fetch(url);
-  let data = await response.json();
-  return data;
-}
-
 export async function markCompleted(user, task, completed) {
   return new Promise(function (resolve, reject) {
     const XHR = new XMLHttpRequest();
