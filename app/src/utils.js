@@ -90,6 +90,29 @@ export async function addTask(formData) {
   });
 }
 
+export async function deleteTask(user, task) {
+  return new Promise(function (resolve, reject) {
+    const XHR = new XMLHttpRequest();
+    let urlEncodedDataPairs = [];
+    urlEncodedDataPairs.push( encodeURIComponent( "userId" ) + '=' + encodeURIComponent( user.id ) );
+    urlEncodedDataPairs.push( encodeURIComponent( "taskId" ) + '=' + encodeURIComponent( task.taskId ) );
+    let urlEncodedData = urlEncodedDataPairs.join( '&' ).replace( /%20/g, '+' );
+    XHR.open( 'POST', 'http://localhost:8000/deleteTask' );
+    XHR.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    XHR.onload = function () {
+      if (this.status >= 200 && this.status < 300) {
+          resolve(XHR.response);
+      } else {
+          reject({
+              status: this.status,
+              statusText: XHR.statusText
+          });
+      }
+    };
+    XHR.send( urlEncodedData );
+  });
+}
+
 export async function updateTime(user, task, time) {
   return new Promise(function (resolve, reject) {
     const XHR = new XMLHttpRequest();

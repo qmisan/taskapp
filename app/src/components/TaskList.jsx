@@ -9,8 +9,9 @@ import Checked from "../assets/Checked.svg";
 import Unchecked from "../assets/Unchecked.svg";
 import CheckboxActive from "../assets/CheckboxActive.svg";
 import Plus from "../assets/plus.svg";
+import TrashIcon from "../assets/trash.svg"
 
-import { getTasks, markCompleted, addTask, updateTime, getTimeUsed } from "../utils.js";
+import { getTasks, markCompleted, addTask, deleteTask, updateTime, getTimeUsed } from "../utils.js";
 
 function AddNewTask({ user, loadTasks, onCancel }) {
   const [formData, setFormData] = useState({ name: "", description: "", userId: user.id });
@@ -42,14 +43,16 @@ function AddNewTask({ user, loadTasks, onCancel }) {
 }
 
 function TaskListItem({ user, task, loadTasks }) {
-  const [active, setActive] = useState(false);
+  const [timerActive, setActive] = useState(false);
   const completed = task.completed === 1;
-  const startStopButtonText = active ? "Stop" : "Start";
-  const showTimeUsed = !active && task.timer > 0;
+  const startStopButtonText = timerActive ? "Stop" : "Start";
+  const showTimeUsed = !timerActive && task.timer > 0;
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(25 * 60 * 1000);
+  const [isHovering, setIsHovering] = useState(false);
 
   async function markTaskComplete() {
+    console.log("completing");
     if (completed) {
       await markCompleted(user, task, 0);
     } else {
@@ -57,13 +60,20 @@ function TaskListItem({ user, task, loadTasks }) {
     }
     await loadTasks();
   }
-
+  
+  
   async function toggleTimer() {
-    setActive(!active);
+    setActive(!timerActive);
     if (!!task) {
       await updateTime(user, task, time);
       await loadTasks();
     }
+  }
+
+  async function handleDelete() {
+    console.log("deleting");
+    await deleteTask(user, task);
+    await loadTasks();
   }
 
   async function onFinish() {
@@ -75,34 +85,49 @@ function TaskListItem({ user, task, loadTasks }) {
   function getCheckbox() {
     if (completed) {
       return <img src={Checked} alt="checked" />;
-    } else if (active) {
+    } else if (timerActive) {
       return <img src={CheckboxActive} alt="active" />;
     } else {
       return <img src={Unchecked} alt="unchecked" />;
     }
   }
 
+
   function onTimerUpdate({ time, duration }) {
     setTime(time);
     setDuration(duration);
   }
 
+  const handleMouseOver = () => {
+    if (!isHovering) {
+      console.log("hovering");
+      setIsHovering(true);
+    }
+  };
+
+  const handleMouseOut = () => {
+    if (isHovering) {
+      console.log("not hovering");
+      setIsHovering(false);
+    }
+  };
+
   return (
-    <div className={classNames("task-list-item", { "completed": completed, "active": active })}>
+    <div className={classNames("task-list-item", { "completed": completed, "active": timerActive })} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
       <div className="checkbox" onClick={markTaskComplete}>{getCheckbox()}</div>
       <div className="task-info">
         <span>{task.name}</span>
         <span>{task.description}</span>
       </div>
       {!completed && (
-        <div className={classNames("task-actions", { "active": active })}>
-          {active && (
+        <div className={classNames("task-actions", { "active": timerActive })}>
+          {timerActive && (
             <h3>
-              <Timer active={active} duration={duration} onTimeUpdate={onTimerUpdate} onFinish={onFinish} />
+              <Timer active={timerActive} duration={duration} onTimeUpdate={onTimerUpdate} onFinish={onFinish} />
               <Timecode time={duration - time} format="mm:ss" />
             </h3>
           )}
-          <button className="toggle-task" onClick={toggleTimer}>
+          <button className={timerActive ? "toggle-task-stop" : "toggle-task-start"} onClick={toggleTimer}>
             {startStopButtonText}
           </button>
           {showTimeUsed && (
@@ -112,6 +137,7 @@ function TaskListItem({ user, task, loadTasks }) {
           )}
         </div>
       )}
+      <div className="delete-button" onClick={handleDelete}><img src={TrashIcon} alt="delete" /></div>
     </div>
   );
 }

@@ -101,6 +101,18 @@ app.post('/addTask', async (req, res) => {
   res.status(204).send('Task created.')
 })
 
+app.post('/deleteTask', async (req, res) => {
+  const { userId, taskId} = req.body;
+  if ((userId === undefined) || (taskId === undefined)) {
+    res.status(400).send('Missing userId or taskId.');
+    return;
+  } 
+  await userTaskRepo.delete(userId, taskId);
+  await taskRepo.delete(taskId);
+  console.log("userId:" + userId + " taskId:", taskId," + DELETED" );
+  res.status(204).send('Task deleted.');  
+})
+
 app.post('/updateTime', async (req, res) => {
   const { userId, taskId, timeToAdd } = req.body
   console.log("Adding timer value:" + timeToAdd)
