@@ -109,7 +109,7 @@ app.post('/deleteTask', async (req, res) => {
   } 
   await userTaskRepo.delete(userId, taskId);
   await taskRepo.delete(taskId);
-  console.log("userId:" + userId + " taskId:", taskId," + DELETED" );
+  console.log("userId:" + userId + "taskId:", taskId,"DELETED" );
   res.status(204).send('Task deleted.');  
 })
 

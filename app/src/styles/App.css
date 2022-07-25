@@ -1,7 +1,6 @@
 @import "./fonts.css";
 @import "./TaskList.css";
 @import "./Task.css";
-@import "./TakeABreak.css";
 
 :root {
   --text-secondary: rgba(0, 0, 0, 0.65);

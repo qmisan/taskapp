@@ -9,7 +9,7 @@ import Checked from "../assets/Checked.svg";
 import Unchecked from "../assets/Unchecked.svg";
 import CheckboxActive from "../assets/CheckboxActive.svg";
 import Plus from "../assets/plus.svg";
-import TrashIcon from "../assets/trash.svg"
+import TrashIcon from "../assets/Trash.svg"
 
 import { getTasks, markCompleted, addTask, deleteTask, updateTime, getTimeUsed } from "../utils.js";
 
@@ -52,7 +52,6 @@ function TaskListItem({ user, task, loadTasks }) {
   const [isHovering, setIsHovering] = useState(false);
 
   async function markTaskComplete() {
-    console.log("completing");
     if (completed) {
       await markCompleted(user, task, 0);
     } else {
@@ -60,8 +59,8 @@ function TaskListItem({ user, task, loadTasks }) {
     }
     await loadTasks();
   }
-  
-  
+
+
   async function toggleTimer() {
     setActive(!timerActive);
     if (!!task) {
@@ -71,7 +70,6 @@ function TaskListItem({ user, task, loadTasks }) {
   }
 
   async function handleDelete() {
-    console.log("deleting");
     await deleteTask(user, task);
     await loadTasks();
   }
@@ -99,17 +97,11 @@ function TaskListItem({ user, task, loadTasks }) {
   }
 
   const handleMouseOver = () => {
-    if (!isHovering) {
-      console.log("hovering");
-      setIsHovering(true);
-    }
+    setIsHovering(true);
   };
 
   const handleMouseOut = () => {
-    if (isHovering) {
-      console.log("not hovering");
-      setIsHovering(false);
-    }
+    setIsHovering(false);
   };
 
   return (

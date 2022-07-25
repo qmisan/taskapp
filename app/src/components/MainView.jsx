@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import * as _ from "underscore";
 
-import { TakeABreak } from "./TakeABreak";
 import { Task } from "./Task";
 import { TaskList } from "./TaskList";
 
@@ -26,7 +25,6 @@ export function MainView({ user }) {
       </div>
       {showTaskList && <TaskList user={user} />}
       {showTimer && <Task task={null} user={user} />}
-      {showPractices && <TakeABreak />}
     </Fragment>
   );
 }
