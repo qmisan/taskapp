@@ -44,7 +44,7 @@ article {
 
 .header {
   position: relative;
-  height: 170px;
+  height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -56,27 +56,20 @@ article {
   margin: 0;
 }
 
+.title h1 {
+  font-size: 37px;
+  width: 25%;
+}
+
 .header::before {
   content: ""; 
   position: absolute;
 }
 
-.aalto-logo {
-  display: flex;
-  flex-direction: row;
-}
-
-.aalto-logo img {
-  align-self: baseline;
-}
-
-.aalto-logo .essentials {
-  font-family: Helvetica;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 142%;
-  color: #FFFFFF;
+.panel {
+  width: 80%;
+  margin: 0 0 10% 10%;
+  align-items: center;
 }
 
 .header .navigation {

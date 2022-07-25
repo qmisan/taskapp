@@ -9,7 +9,6 @@ export function MainView({ user }) {
 
   const showTaskList = view === "tasks";
   const showTimer = view === "timer";
-  const showPractices = view === "break";
 
   useEffect(() => {
     if (!("Notification" in window)) {
@@ -22,6 +21,16 @@ export function MainView({ user }) {
   return (
     <Fragment>
       <div className="header">
+        <div className="panel">
+          <div className="title">
+            <h1>TaskApp</h1>
+          </div>
+          {/* <div className="nav-bar">
+          <ul className="nav-panel">
+          <li>Settings</li>
+          </ul>
+        </div> */}
+        </div>
       </div>
       {showTaskList && <TaskList user={user} />}
       {showTimer && <Task task={null} user={user} />}
