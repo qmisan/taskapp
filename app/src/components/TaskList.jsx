@@ -42,14 +42,44 @@ function AddNewTask({ user, loadTasks, onCancel }) {
   )
 }
 
+function StartButton(props) {
+  return (
+    <button className={"task-timer-start"} onClick={props.onClick}>
+      Start
+    </button>
+  );
+}
+
+function StopButton(props) {
+  return (
+    <button className={"task-timer-stop"} onClick={props.onClick}>
+      Stop
+    </button>
+  );
+}
+
+function ContinueClearButton(props) {
+  return (
+    <div className="task-timer-continue-reset">
+      <button className={"task-timer-continue"} onClick={props.onContinueClick}>
+        Continue
+      </button>
+      <button className={"task-timer-reset"} onClick={props.onResetClick}>
+        Reset
+      </button>
+    </div>
+  )
+}
+
 function TaskListItem({ user, task, loadTasks }) {
-  const [timerActive, setActive] = useState(false);
+  const [timerActive, setTimerActive] = useState(false);
   const completed = task.completed === 1;
-  const startStopButtonText = timerActive ? "Stop" : "Start";
   const showTimeUsed = !timerActive && task.timer > 0;
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(25 * 60 * 1000);
   const [isHovering, setIsHovering] = useState(false);
+  const [oldTimerValue, setOldTimerValue] = useState(0);
+  const [oldTimerActive, setOldTimerActive] = useState(false);
 
   async function markTaskComplete() {
     if (completed) {
@@ -60,13 +90,33 @@ function TaskListItem({ user, task, loadTasks }) {
     await loadTasks();
   }
 
+  function startTimer() {
+    setTimerActive(true);
+    setDuration(25 * 60 * 1000);
+  }
 
-  async function toggleTimer() {
-    setActive(!timerActive);
+  async function stopTimer() {
+    setTimerActive(false);
+    setOldTimerActive(true);
+    setOldTimerValue(time);
     if (!!task) {
       await updateTime(user, task, time);
       await loadTasks();
     }
+  }
+
+  function continueTimer() {
+    setTimerActive(true);
+    setTime(oldTimerValue);
+    setDuration(duration - oldTimerValue);
+    setOldTimerValue(0);
+    setOldTimerActive(false);
+  }
+
+  function resetTimer() {
+    setOldTimerValue(0);
+    setOldTimerActive(false);
+    setTime(0);
   }
 
   async function handleDelete() {
@@ -90,7 +140,6 @@ function TaskListItem({ user, task, loadTasks }) {
     }
   }
 
-
   function onTimerUpdate({ time, duration }) {
     setTime(time);
     setDuration(duration);
@@ -113,23 +162,33 @@ function TaskListItem({ user, task, loadTasks }) {
       </div>
       {!completed && (
         <div className={classNames("task-actions", { "active": timerActive })}>
-          {timerActive && (
-            <h3>
-              <Timer active={timerActive} duration={duration} onTimeUpdate={onTimerUpdate} onFinish={onFinish} />
-              <Timecode time={duration - time} format="mm:ss" />
-            </h3>
-          )}
-          <button className={timerActive ? "toggle-task-stop" : "toggle-task-start"} onClick={toggleTimer}>
-            {startStopButtonText}
-          </button>
           {showTimeUsed && (
-            <div>
-              <div className="time-used">{"Time spent: " + getTimeUsed(task.timer)}</div>
+            <p className="time-used">
+              {"Time spent: " + getTimeUsed(task.timer)}
+            </p>
+          )}
+
+          {timerActive && (
+            <div className="timer-stop-div">
+              <h3>
+                <Timer active={timerActive} duration={duration} onTimeUpdate={onTimerUpdate} onFinish={onFinish} />
+                <Timecode time={duration - time} format="mm:ss" />
+              </h3>
+              <StopButton onClick={stopTimer} />
             </div>
           )}
+          {!timerActive && (
+            !oldTimerActive ?
+              <StartButton onClick={startTimer} /> :
+              <ContinueClearButton onContinueClick={continueTimer} onResetClick={resetTimer} />
+          )}
+
+          <div className="delete-button" onClick={handleDelete}><img src={TrashIcon} alt="delete" /></div>
         </div>
       )}
-      <div className="delete-button" onClick={handleDelete}><img src={TrashIcon} alt="delete" /></div>
+      {completed && (
+        <div className="delete-button" onClick={handleDelete}><img src={TrashIcon} alt="delete" /></div>
+      )}
     </div>
   );
 }
@@ -173,7 +232,7 @@ export function TaskList({ user }) {
 
   const completedTasksCount = completedTasks.length;
   const hasFinishedTasks = completedTasksCount > 0;
-  const completedMessage = hasFinishedTasks ? "You have already completed " + completedTasksCount + " task(s)!" : "";
+  const completedMessage = hasFinishedTasks ? "Completed tasks" : "";
 
   return (
     <Fragment>
