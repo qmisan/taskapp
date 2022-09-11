@@ -130,6 +130,8 @@
 
 .timer-stop-div {
   display: flex;
+  align-items: center;
+  justify-content: right;
 }
 
 .task-timer-reset {
@@ -317,3 +319,7 @@
 .delete-button:hover {
   cursor: pointer;
 } 
+
+.progress-bar {
+  width: 25%;
+}

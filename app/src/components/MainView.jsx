@@ -1,14 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import * as _ from "underscore";
 
-import { Task } from "./Task";
 import { TaskList } from "./TaskList";
 
 export function MainView({ user }) {
   const [view, setView] = useState("tasks");
 
   const showTaskList = view === "tasks";
-  const showTimer = view === "timer";
 
   useEffect(() => {
     if (!("Notification" in window)) {
@@ -33,7 +31,6 @@ export function MainView({ user }) {
         </div>
       </div>
       {showTaskList && <TaskList user={user} />}
-      {showTimer && <Task task={null} user={user} />}
     </Fragment>
   );
 }
